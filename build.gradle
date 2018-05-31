@@ -1,0 +1,43 @@
+group = 'boston'
+version = '0.0.1-SNAPSHOT'
+
+buildscript {
+    repositories {
+        jcenter()
+
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.2'
+        classpath "io.franzbecker:gradle-lombok:1.11"
+    }
+}
+
+apply plugin: 'java'
+apply plugin: "io.franzbecker.gradle-lombok"
+apply plugin: 'org.junit.platform.gradle.plugin'
+
+repositories {
+    jcenter()
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+
+dependencies {
+    compile('org.springframework.boot:spring-boot-starter-web:2.0.2.RELEASE')
+    compile 'com.google.code.gson:gson:2.8.5'
+    compile group: 'org.apache.hive', name: 'hive-jdbc', version: '1.1.0'
+    compile group: 'org.apache.hadoop', name: 'hadoop-core', version: '1.1.0'
+    testCompile('org.springframework.boot:spring-boot-starter-test:2.0.2.RELEASE')
+}
+
+
+task copyToLib(type: Copy) {
+    into "$buildDir/libs"
+    from configurations.runtime
+}
+build.dependsOn(copyToLib)
