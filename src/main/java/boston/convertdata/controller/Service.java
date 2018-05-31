@@ -1,5 +1,6 @@
 package boston.convertdata.controller;
 
+import boston.convertdata.EsUploader;
 import boston.convertdata.HiveHelper;
 import boston.convertdata.model.Video;
 import boston.convertdata.model.*;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
 
+import java.io.IOException;
 import java.time.Instant;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -22,13 +24,17 @@ import java.util.ArrayList;
 @RestController
 
 public class Service {
+    private static final String elasticSearchUrl = "http://47.104.22.92:9200";
+    private static final String indexName = "video_data_v2_test";
+
     @PostMapping
     public ResponseEntity postController(
-            @RequestBody Video video) {
+            @RequestBody Video video) throws Exception {
             ConvertData(video);
         return ResponseEntity.ok(HttpStatus.OK);
     }
-    public static void ConvertData(Video video){
+
+    private static void ConvertData(Video video) throws Exception {
         val hiveController = new HiveHelper();
         val result = new ArrayList<>();
         for(int i = 0; i < video.getFramesInfo().size(); i++){
@@ -86,10 +92,15 @@ public class Service {
 //                hiveController.executedNoquery(sql);
             }
         }
-        Gson gson = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
-        for(int i = 0; i < result.size(); i++){
-            String jsonRepresentation = gson.toJson(result.get(i));
-            System.out.println(jsonRepresentation+"\n");
+
+        try (val uploader = new EsUploader(elasticSearchUrl, indexName, 1000)) {
+            Gson gson = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
+            for (int i = 0; i < result.size(); i++) {
+                String jsonRepresentation = gson.toJson(result.get(i));
+                uploader.addJsonDocument(jsonRepresentation);
+                System.out.println(jsonRepresentation + "\n");
+            }
+            uploader.flush();
         }
     }
     public static String absoluteTime(String startTime, String relativeTime){
