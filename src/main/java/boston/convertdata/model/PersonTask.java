@@ -5,13 +5,13 @@ import lombok.Data;
 @Data
 public class PersonTask {
     private Person person;
-    private VideoInformation videoInformation;
+    private VideoInfo videoInfo;
     private CameraInfo cameraInfo;
     private FrameInfo frameInfo;
 
-    public PersonTask(Person person, VideoInformation videoInformation, CameraInfo camera_info, FrameInfo frame_info){
+    public PersonTask(Person person, VideoInfo videoInfo, CameraInfo camera_info, FrameInfo frame_info){
         this.person = person;
-        this.videoInformation = videoInformation;
+        this.videoInfo = videoInfo;
         this.cameraInfo = camera_info;
         this.frameInfo = frame_info;
     }

@@ -32,25 +32,25 @@ public class Service {
         val hiveController = new HiveHelper();
         val result = new ArrayList<>();
         for(int i = 0; i < video.getFramesInfo().size(); i++){
-            VideoInformation videoInformation = new VideoInformation();
-            videoInformation.setVideoId(video.getVideoInfo().getVideoId());
+            VideoInfo videoInfo = new VideoInfo();
+            videoInfo.setVideoId(video.getVideoInfo().getVideoId());
             val startTime = "2018-01-01T12:00:00Z";
-            videoInformation.setStartTime(startTime);
+            videoInfo.setStartTime(startTime);
             val relativeTime = video.getFramesInfo().get(i).getFrameInfo().get(0).getRelativeTime();
-            val frame_info = new FrameInfo();
-            frame_info.setRelativeTime(relativeTime);
+            val frameInfo = new FrameInfo();
+            frameInfo.setRelativeTime(relativeTime);
             val absoluteTime = absoluteTime(startTime,relativeTime);
-            frame_info.setAbsoluteTim(absoluteTime);
+            frameInfo.setAbsoluteTim(absoluteTime);
             for(int j = 0; j < video.getFramesInfo().get(i).getCars().size();j++){
                 CameraPosition cameraPosition = new CameraPosition();
-                cameraPosition.setLat("51.4");
-                cameraPosition.setLon("15.4");
+                cameraPosition.setLat(51.4);
+                cameraPosition.setLon(15.4);
                 CameraInfo cameraInfo = new CameraInfo();
                 cameraInfo.setCameraId("c000001");
                 cameraInfo.setCameraName("朝阳区新东路01");
                 cameraInfo.setPosition(cameraPosition);
                 Car car = video.getFramesInfo().get(i).getCars().get(j);
-                CarTask carTask = new CarTask(car,videoInformation,cameraInfo,frame_info);
+                CarTask carTask = new CarTask(car, videoInfo,cameraInfo,frameInfo);
                 result.add(carTask);
 //                String sql = "insert into object_data select named_struct（'carId','"+carTask.car.carId+"','make','"+carTask.car.make
 //                        +"','model','"+carTask.car.model+"','carColor',"+carTask.car.carColor+"','carLeftbottom',"+carTask.car.car_leftbottom
@@ -61,10 +61,10 @@ public class Service {
             }
         }
         for(int i = 0; i < video.getFramesInfo().size(); i++){
-            VideoInformation videoInformation = new VideoInformation();
-            videoInformation.setVideoId(video.getVideoInfo().getVideoId());
+            VideoInfo videoInfo = new VideoInfo();
+            videoInfo.setVideoId(video.getVideoInfo().getVideoId());
             val startTime = "2018-01-01T12:00:00Z";
-            videoInformation.setStartTime(startTime);
+            videoInfo.setStartTime(startTime);
             val relativeTime = video.getFramesInfo().get(i).getFrameInfo().get(0).getRelativeTime();
             val frame_info = new FrameInfo();
             frame_info.setRelativeTime(relativeTime);
@@ -72,14 +72,14 @@ public class Service {
             frame_info.setAbsoluteTim(absoluteTime);
             for(int j = 0; j < video.getFramesInfo().get(i).getPeople().size();j++){
                 CameraPosition cameraPosition = new CameraPosition();
-                cameraPosition.setLat("51.4");
-                cameraPosition.setLon("15.4");
+                cameraPosition.setLat(51.4);
+                cameraPosition.setLon(15.4);
                 CameraInfo cameraInfo = new CameraInfo();
                 cameraInfo.setCameraId("c000001");
                 cameraInfo.setCameraName("朝阳区新东路01");
                 cameraInfo.setPosition(cameraPosition);
                 Person person = video.getFramesInfo().get(i).getPeople().get(j);
-                PersonTask personTask = new PersonTask(person,videoInformation,cameraInfo,frame_info);
+                PersonTask personTask = new PersonTask(person, videoInfo,cameraInfo,frame_info);
                 result.add(personTask);
 //                String sql = "insert into object_data values（"+ personTask.video_information+","+personTask.camera_info+","
 //                        +personTask.person+",null,"+personTask.frame_info+")";

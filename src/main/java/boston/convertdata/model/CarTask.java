@@ -4,14 +4,14 @@ import lombok.Data;
 
 @Data
 public class CarTask {
-    private VideoInformation videoInformation;
+    private VideoInfo videoInfo;
     private CameraInfo cameraInfo;
     private FrameInfo frameInfo;
     private Car car;
 
-    public CarTask(Car car, VideoInformation videoInformation, CameraInfo cameraInfo, FrameInfo frameInfo){
+    public CarTask(Car car, VideoInfo videoInfo, CameraInfo cameraInfo, FrameInfo frameInfo){
         this.car = car;
-        this.videoInformation = videoInformation;
+        this.videoInfo = videoInfo;
         this.cameraInfo = cameraInfo;
         this.frameInfo = frameInfo;
     }

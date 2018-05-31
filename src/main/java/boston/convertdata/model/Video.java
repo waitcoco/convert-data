@@ -6,6 +6,6 @@ import java.util.ArrayList;
 
 @Data
 public class Video {
-    private VideoInfo videoInfo;
+    private VideoInformation videoInfo;
     private ArrayList<Frame> framesInfo;
 }

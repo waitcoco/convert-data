@@ -4,6 +4,6 @@ import lombok.Data;
 
 @Data
 public class CameraPosition {
-    private String lat;
-    private String lon;
+    private double lat;
+    private double lon;
 }

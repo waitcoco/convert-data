@@ -4,7 +4,8 @@ import lombok.Data;
 
 @Data
 public class VideoInformation {
+    private String videoUrl;
     private String videoId;
-    private String startTime;
 
 }
+
