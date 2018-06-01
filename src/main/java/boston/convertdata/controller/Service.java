@@ -2,6 +2,7 @@ package boston.convertdata.controller;
 
 import boston.convertdata.EsUploader;
 import boston.convertdata.HiveHelper;
+import boston.convertdata.VideoInfoGetter;
 import boston.convertdata.model.*;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
@@ -34,26 +35,31 @@ public class Service {
     }
 
     private static void ConvertData(Video video) throws Exception {
+        val videoInfoGetter = new VideoInfoGetter();
         val hiveController = new HiveHelper();
         val result = new ArrayList<>();
         for(int i = 0; i < video.getFramesInfo().size(); i++){
             VideoInfo videoInfo = new VideoInfo();
             videoInfo.setVideoId(video.getVideoInfo().getVideoId());
-            val startTime = "2018-01-01T12:00:00Z";
+            //val startTime = "2018-01-01T12:00:00Z";
+            val startTime = videoInfoGetter.getVideoStartTime(video.getVideoInfo().getVideoId());
             videoInfo.setStartTime(startTime);
             val relativeTime = video.getFramesInfo().get(i).getFrameInfo().get(0).getRelativeTime();
             val frameInfo = new FrameInfo();
             frameInfo.setRelativeTime(relativeTime);
             val absoluteTime = absoluteTime(startTime,relativeTime);
             frameInfo.setAbsoluteTime(absoluteTime);
+            CameraPosition cameraPosition = new CameraPosition();
+            Double Lat = Double.parseDouble(videoInfoGetter.getCameraLat(video.getVideoInfo().getVideoId()));
+            Double Lon = Double.parseDouble(videoInfoGetter.getCameraLon(video.getVideoInfo().getVideoId()));
+            cameraPosition.setLat(Lat);
+            cameraPosition.setLon(Lon);
+            CameraInfo cameraInfo = new CameraInfo();
+            cameraInfo.setCameraId(videoInfoGetter.getCameraId(video.getVideoInfo().getVideoId()));
+            cameraInfo.setCameraName(videoInfoGetter.getCameraName(video.getVideoInfo().getVideoId()));
+            cameraInfo.setPosition(cameraPosition);
             for(int j = 0; j < video.getFramesInfo().get(i).getCars().size();j++){
-                CameraPosition cameraPosition = new CameraPosition();
-                cameraPosition.setLat(51.4);
-                cameraPosition.setLon(15.4);
-                CameraInfo cameraInfo = new CameraInfo();
-                cameraInfo.setCameraId("c000001");
-                cameraInfo.setCameraName("朝阳区新东路01");
-                cameraInfo.setPosition(cameraPosition);
+
                 Car car = video.getFramesInfo().get(i).getCars().get(j);
                 CarTask carTask = new CarTask(car, videoInfo,cameraInfo,frameInfo);
                 result.add(carTask);
@@ -68,23 +74,26 @@ public class Service {
         for(int i = 0; i < video.getFramesInfo().size(); i++){
             VideoInfo videoInfo = new VideoInfo();
             videoInfo.setVideoId(video.getVideoInfo().getVideoId());
-            val startTime = "2018-01-01T12:00:00Z";
+            //val startTime = "2018-01-01T12:00:00Z";
+            val startTime = videoInfoGetter.getVideoStartTime(video.getVideoInfo().getVideoId());
             videoInfo.setStartTime(startTime);
             val relativeTime = video.getFramesInfo().get(i).getFrameInfo().get(0).getRelativeTime();
-            val frame_info = new FrameInfo();
-            frame_info.setRelativeTime(relativeTime);
+            val frameInfo = new FrameInfo();
+            frameInfo.setRelativeTime(relativeTime);
             val absoluteTime = absoluteTime(startTime,relativeTime);
-            frame_info.setAbsoluteTime(absoluteTime);
+            frameInfo.setAbsoluteTime(absoluteTime);
+            CameraPosition cameraPosition = new CameraPosition();
+            Double Lat = Double.parseDouble(videoInfoGetter.getCameraLat(video.getVideoInfo().getVideoId()));
+            Double Lon = Double.parseDouble(videoInfoGetter.getCameraLon(video.getVideoInfo().getVideoId()));
+            cameraPosition.setLat(Lat);
+            cameraPosition.setLon(Lon);
+            CameraInfo cameraInfo = new CameraInfo();
+            cameraInfo.setCameraId(videoInfoGetter.getCameraId(video.getVideoInfo().getVideoId()));
+            cameraInfo.setCameraName(videoInfoGetter.getCameraName(video.getVideoInfo().getVideoId()));
+            cameraInfo.setPosition(cameraPosition);
             for(int j = 0; j < video.getFramesInfo().get(i).getPeople().size();j++){
-                CameraPosition cameraPosition = new CameraPosition();
-                cameraPosition.setLat(51.4);
-                cameraPosition.setLon(15.4);
-                CameraInfo cameraInfo = new CameraInfo();
-                cameraInfo.setCameraId("c000001");
-                cameraInfo.setCameraName("朝阳区新东路01");
-                cameraInfo.setPosition(cameraPosition);
                 Person person = video.getFramesInfo().get(i).getPeople().get(j);
-                PersonTask personTask = new PersonTask(person, videoInfo,cameraInfo,frame_info);
+                PersonTask personTask = new PersonTask(person, videoInfo,cameraInfo,frameInfo);
                 result.add(personTask);
 //                String sql = "insert into object_data values（"+ personTask.video_information+","+personTask.camera_info+","
 //                        +personTask.person+",null,"+personTask.frame_info+")";

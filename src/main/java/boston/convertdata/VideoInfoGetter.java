@@ -13,10 +13,10 @@ import org.apache.http.util.EntityUtils;
 
 public class VideoInfoGetter {
 
-    public String getVideoStartTime(int videoId) {
+    public String getVideoStartTime(String videoId) {
         String videoStartTime = "";
         try {
-            String httpRequestURL = "http://localhost:8080/getvideodetail?videoId=" + Integer.toString(videoId);
+            String httpRequestURL = "http://localhost:8080/getvideodetail?videoId=" + videoId;
             CloseableHttpClient httpClient = HttpClients.createDefault();
             HttpGet httpGet = new HttpGet(httpRequestURL);
             CloseableHttpResponse response = httpClient.execute(httpGet);
@@ -28,10 +28,10 @@ public class VideoInfoGetter {
         return videoStartTime;
     }
 
-    public String getCameraId(int videoId){
+    public String getCameraId(String videoId){
         String cameraId = "";
         try{
-            String httpRequestURL = "http://loaclhost:8080/getcameraid?videoId="+Integer.toString(videoId);
+            String httpRequestURL = "http://loaclhost:8080/getcameraid?videoId="+videoId;
             CloseableHttpClient httpClient = HttpClients.createDefault();
             HttpGet httpGet = new HttpGet(httpRequestURL);
             CloseableHttpResponse response = httpClient.execute(httpGet);
@@ -44,10 +44,10 @@ public class VideoInfoGetter {
         return cameraId;
     }
 
-    public String getCameraName(int videoId){
+    public String getCameraName(String videoId){
         String cameraName = "";
         try{
-            String httpRequestURL = "http://localhost:8080/getcameraname?videoId=" + Integer.toString(videoId);
+            String httpRequestURL = "http://localhost:8080/getcameraname?videoId=" + videoId;
             CloseableHttpClient httpClient = HttpClients.createDefault();
             HttpGet httpGet = new HttpGet(httpRequestURL);
             CloseableHttpResponse response = httpClient.execute(httpGet);
@@ -60,10 +60,10 @@ public class VideoInfoGetter {
         return cameraName;
     }
 
-    public String getCameraLat(int videoId){
+    public String getCameraLat(String videoId){
         String cameraLat = "";
         try{
-            String httpRequestURL = "http://loaclhost:8080/getcameralat?videoId="+Integer.toString(videoId);
+            String httpRequestURL = "http://loaclhost:8080/getcameralat?videoId="+videoId;
             CloseableHttpClient httpClient = HttpClients.createDefault();
             HttpGet httpGet = new HttpGet(httpRequestURL);
             CloseableHttpResponse response = httpClient.execute(httpGet);
@@ -76,10 +76,10 @@ public class VideoInfoGetter {
         return cameraLat;
     }
 
-    public String getCameraLon(int videoId){
+    public String getCameraLon(String videoId){
         String cameraLon = "";
         try{
-            String httpRequestURL = "http://loaclhost:8080/getcameralon?videoId="+Integer.toString(videoId);
+            String httpRequestURL = "http://loaclhost:8080/getcameralon?videoId="+videoId;
             CloseableHttpClient httpClient = HttpClients.createDefault();
             HttpGet httpGet = new HttpGet(httpRequestURL);
             CloseableHttpResponse response = httpClient.execute(httpGet);
