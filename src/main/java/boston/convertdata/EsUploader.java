@@ -1,7 +1,11 @@
 package boston.convertdata;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import lombok.val;
 import org.apache.http.HttpHost;
+import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
+import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.index.IndexRequest;
@@ -17,24 +21,23 @@ import java.util.logging.Logger;
 public class EsUploader implements AutoCloseable {
     private final RestHighLevelClient esClient;
     private final String indexName;
+    private final String type;
     private final int batchSize;
     private final List<String> queue = new ArrayList<>();
     private int count = 0;
     private static final Logger logger = Logger.getLogger(EsUploader.class.getName());
 
-    public EsUploader(String elasticSearchUrl, String indexName, int batchSize) throws IOException {
+    public EsUploader(String elasticSearchUrl, String indexName, String type, int batchSize) throws IOException {
         esClient = new RestHighLevelClient(RestClient.builder(HttpHost.create(elasticSearchUrl)));
         this.indexName = indexName;
+        this.type = type;
         this.batchSize = batchSize;
-        //ensureIndexNotExist();
     }
 
-    private void ensureIndexNotExist() throws IOException {
+    public boolean indexExists() throws IOException {
         val response = esClient.getLowLevelClient().performRequest("HEAD", "/" + indexName);
         int statusCode = response.getStatusLine().getStatusCode();
-        if (statusCode != 404) {
-            throw new RuntimeException("Index " + indexName + " already exists.");
-        }
+        return statusCode != 404;
     }
 
     public void addJsonDocument(String json) throws IOException {
@@ -45,18 +48,22 @@ public class EsUploader implements AutoCloseable {
     }
 
     public void deleteIndex() throws IOException {
-        val response = esClient.getLowLevelClient().performRequest("DELETE", "/" + indexName);
-        int statusCode = response.getStatusLine().getStatusCode();
-        if (statusCode < 200 || statusCode >= 400) {
-            throw new RuntimeException("Failed to delete index. Status code: " + statusCode);
+        esClient.indices().delete(new DeleteIndexRequest(indexName));
+    }
+
+    public void createIndex(Object... mapping) throws IOException {
+        val request = new CreateIndexRequest(indexName);
+        if (mapping != null && mapping.length > 0) {
+            request.mapping(type, mapping);
         }
+        esClient.indices().create(request);
     }
 
     public void flush() throws IOException {
         if (!queue.isEmpty()) {
             val bulkRequest = new BulkRequest();
             queue.forEach(json -> {
-                val indexRequest = new IndexRequest(indexName, "doc").source(json, XContentType.JSON);
+                val indexRequest = new IndexRequest(indexName, type).source(json, XContentType.JSON);
                 bulkRequest.add(indexRequest);
             });
             BulkResponse bulkResponse;
