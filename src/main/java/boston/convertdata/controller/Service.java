@@ -2,20 +2,17 @@ package boston.convertdata.controller;
 
 import boston.convertdata.EsUploader;
 import boston.convertdata.HiveHelper;
-import boston.convertdata.model.Video;
 import boston.convertdata.model.*;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import lombok.Data;
 import lombok.val;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.io.IOException;
 import java.time.Instant;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -23,10 +20,11 @@ import java.time.temporal.TemporalAccessor;
 import java.util.ArrayList;
 
 @RestController
-@Data
 public class Service {
-    private static final String elasticSearchUrl = "http://47.104.22.92:9200";
-    private static final String indexName = "video_data_v2_test";
+    private static final String ELASTIC_SEARCH_URL = "http://47.104.22.92:9200";
+    private static final String INDEX_NAME = "video_data_v2_test";
+    private static final String TYPE = "doc";
+    private static final int BATCH_SIZE = 1000;
 
     @PostMapping
     public ResponseEntity postController(
@@ -94,7 +92,13 @@ public class Service {
             }
         }
 
-        try (val uploader = new EsUploader(elasticSearchUrl, indexName, 1000)) {
+        try (val uploader = new EsUploader(ELASTIC_SEARCH_URL, INDEX_NAME, TYPE, BATCH_SIZE)) {
+//            if (uploader.indexExists()) {
+//                uploader.deleteIndex();
+//            }
+            if (!uploader.indexExists()) {
+                uploader.createIndex("camera_info.position", "type=geo_point");
+            }
             Gson gson = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
             for (int i = 0; i < result.size(); i++) {
                 String jsonRepresentation = gson.toJson(result.get(i));
