@@ -1,7 +1,6 @@
 package boston.convertdata.controller;
 
 import boston.convertdata.EsUploader;
-import boston.convertdata.HiveHelper;
 import boston.convertdata.VideoInfoGetter;
 import boston.convertdata.model.*;
 import com.google.gson.FieldNamingPolicy;
@@ -36,7 +35,6 @@ public class Service {
 
     private static void ConvertData(Video video) throws Exception {
         val videoInfoGetter = new VideoInfoGetter();
-        val hiveController = new HiveHelper();
         val result = new ArrayList<>();
         for(int i = 0; i < video.getFramesInfo().size(); i++){
             VideoInfo videoInfo = new VideoInfo();

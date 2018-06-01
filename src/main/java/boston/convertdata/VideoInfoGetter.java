@@ -1,7 +1,6 @@
 package boston.convertdata;
 
 import lombok.Data;
-import org.apache.commons.httpclient.HttpClient;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
