@@ -1,0 +1,40 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: boston-convertdata
+  labels:
+    app: boston-convertdata
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    targetPort: 8080
+  selector:
+    app: boston-convertdata
+---
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: boston-convertdata
+  labels:
+    app: boston-convertdata
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: boston-convertdata
+  template:
+    metadata:
+      labels:
+        app: boston-convertdata
+    spec:
+      containers:
+      - name: boston-convertdata
+        image: SERVER_IMAGE_TAG_HERE
+        ports:
+        - containerPort: 8080
+        resources:
+          limits:
+            cpu: 200m
+            memory: 512Mi
+        args: []
