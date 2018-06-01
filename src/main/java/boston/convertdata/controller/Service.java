@@ -45,7 +45,7 @@ public class Service {
             val frameInfo = new FrameInfo();
             frameInfo.setRelativeTime(relativeTime);
             val absoluteTime = absoluteTime(startTime,relativeTime);
-            frameInfo.setAbsoluteTim(absoluteTime);
+            frameInfo.setAbsoluteTime(absoluteTime);
             for(int j = 0; j < video.getFramesInfo().get(i).getCars().size();j++){
                 CameraPosition cameraPosition = new CameraPosition();
                 cameraPosition.setLat(51.4);
@@ -74,7 +74,7 @@ public class Service {
             val frame_info = new FrameInfo();
             frame_info.setRelativeTime(relativeTime);
             val absoluteTime = absoluteTime(startTime,relativeTime);
-            frame_info.setAbsoluteTim(absoluteTime);
+            frame_info.setAbsoluteTime(absoluteTime);
             for(int j = 0; j < video.getFramesInfo().get(i).getPeople().size();j++){
                 CameraPosition cameraPosition = new CameraPosition();
                 cameraPosition.setLat(51.4);

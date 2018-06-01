@@ -32,6 +32,7 @@ dependencies {
     compile 'com.google.code.gson:gson:2.8.5'
     compile group: 'org.apache.hive', name: 'hive-jdbc', version: '1.1.0'
     compile group: 'org.apache.hadoop', name: 'hadoop-core', version: '1.1.0'
+    compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.5'
     compile 'org.elasticsearch.client:elasticsearch-rest-high-level-client:6.2.4'
     testCompile('org.springframework.boot:spring-boot-starter-test:2.0.2.RELEASE')
 }
