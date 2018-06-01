@@ -7,8 +7,9 @@ import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import lombok.val;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.elasticsearch.client.RestHighLevelClient;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,22 +22,29 @@ import java.util.ArrayList;
 
 @RestController
 public class Service {
-    private static final String ELASTIC_SEARCH_URL = "http://47.104.22.92:9200";
-    private static final String INDEX_NAME = "video_data_v2_test";
-    private static final String TYPE = "doc";
-    private static final int BATCH_SIZE = 1000;
 
-    @PostMapping
-    public ResponseEntity postController(
-            @RequestBody Video video) throws Exception {
-            ConvertData(video);
-        return ResponseEntity.ok(HttpStatus.OK);
+    private final RestHighLevelClient restHighLevelClient;
+    private final String indexName;
+    private final String type;
+    private final int batchSize;
+
+    @Autowired
+    public Service(RestHighLevelClient restHighLevelClient,
+                   @Value("${elasticsearch.indexName}") String indexName,
+                   @Value("${elasticsearch.type:doc}") String type,
+                   @Value("${elasticsearch.batchSize:1000}") int batchSize) {
+        this.restHighLevelClient = restHighLevelClient;
+        this.indexName = indexName;
+        this.type = type;
+        this.batchSize = batchSize;
     }
 
-    private static void ConvertData(Video video) throws Exception {
+    @PostMapping
+    public void postController(
+            @RequestBody Video video) throws Exception {
         val videoInfoGetter = new VideoInfoGetter();
         val result = new ArrayList<>();
-        for(int i = 0; i < video.getFramesInfo().size(); i++){
+        for (int i = 0; i < video.getFramesInfo().size(); i++) {
             VideoInfo videoInfo = new VideoInfo();
             videoInfo.setVideoId(video.getVideoInfo().getVideoId());
             //val startTime = "2018-01-01T12:00:00Z";
@@ -45,7 +53,7 @@ public class Service {
             val relativeTime = video.getFramesInfo().get(i).getFrameInfo().get(0).getRelativeTime();
             val frameInfo = new FrameInfo();
             frameInfo.setRelativeTime(relativeTime);
-            val absoluteTime = absoluteTime(startTime,relativeTime);
+            val absoluteTime = absoluteTime(startTime, relativeTime);
             frameInfo.setAbsoluteTime(absoluteTime);
             CameraPosition cameraPosition = new CameraPosition();
             Double Lat = Double.parseDouble(videoInfoGetter.getCameraLat(video.getVideoInfo().getVideoId()));
@@ -56,10 +64,10 @@ public class Service {
             cameraInfo.setCameraId(videoInfoGetter.getCameraId(video.getVideoInfo().getVideoId()));
             cameraInfo.setCameraName(videoInfoGetter.getCameraName(video.getVideoInfo().getVideoId()));
             cameraInfo.setPosition(cameraPosition);
-            for(int j = 0; j < video.getFramesInfo().get(i).getCars().size();j++){
+            for (int j = 0; j < video.getFramesInfo().get(i).getCars().size(); j++) {
 
                 Car car = video.getFramesInfo().get(i).getCars().get(j);
-                CarTask carTask = new CarTask(car, videoInfo,cameraInfo,frameInfo);
+                CarTask carTask = new CarTask(car, videoInfo, cameraInfo, frameInfo);
                 result.add(carTask);
 //                String sql = "insert into object_data select named_struct（'carId','"+carTask.car.carId+"','make','"+carTask.car.make
 //                        +"','model','"+carTask.car.model+"','carColor',"+carTask.car.carColor+"','carLeftbottom',"+carTask.car.car_leftbottom
@@ -69,7 +77,7 @@ public class Service {
 //                hiveController.executedNoquery(sql);
             }
         }
-        for(int i = 0; i < video.getFramesInfo().size(); i++){
+        for (int i = 0; i < video.getFramesInfo().size(); i++) {
             VideoInfo videoInfo = new VideoInfo();
             videoInfo.setVideoId(video.getVideoInfo().getVideoId());
             //val startTime = "2018-01-01T12:00:00Z";
@@ -78,7 +86,7 @@ public class Service {
             val relativeTime = video.getFramesInfo().get(i).getFrameInfo().get(0).getRelativeTime();
             val frameInfo = new FrameInfo();
             frameInfo.setRelativeTime(relativeTime);
-            val absoluteTime = absoluteTime(startTime,relativeTime);
+            val absoluteTime = absoluteTime(startTime, relativeTime);
             frameInfo.setAbsoluteTime(absoluteTime);
             CameraPosition cameraPosition = new CameraPosition();
             Double Lat = Double.parseDouble(videoInfoGetter.getCameraLat(video.getVideoInfo().getVideoId()));
@@ -89,9 +97,9 @@ public class Service {
             cameraInfo.setCameraId(videoInfoGetter.getCameraId(video.getVideoInfo().getVideoId()));
             cameraInfo.setCameraName(videoInfoGetter.getCameraName(video.getVideoInfo().getVideoId()));
             cameraInfo.setPosition(cameraPosition);
-            for(int j = 0; j < video.getFramesInfo().get(i).getPeople().size();j++){
+            for (int j = 0; j < video.getFramesInfo().get(i).getPeople().size(); j++) {
                 Person person = video.getFramesInfo().get(i).getPeople().get(j);
-                PersonTask personTask = new PersonTask(person, videoInfo,cameraInfo,frameInfo);
+                PersonTask personTask = new PersonTask(person, videoInfo, cameraInfo, frameInfo);
                 result.add(personTask);
 //                String sql = "insert into object_data values（"+ personTask.video_information+","+personTask.camera_info+","
 //                        +personTask.person+",null,"+personTask.frame_info+")";
@@ -99,7 +107,7 @@ public class Service {
             }
         }
 
-        try (val uploader = new EsUploader(ELASTIC_SEARCH_URL, INDEX_NAME, TYPE, BATCH_SIZE)) {
+        try (val uploader = new EsUploader(restHighLevelClient, indexName, type, batchSize)) {
 //            if (uploader.indexExists()) {
 //                uploader.deleteIndex();
 //            }
@@ -115,7 +123,8 @@ public class Service {
             uploader.flush();
         }
     }
-    public static String absoluteTime(String startTime, String relativeTime){
+
+    private static String absoluteTime(String startTime, String relativeTime){
         DateTimeFormatter timeFormatter = DateTimeFormatter.ISO_DATE_TIME;
         TemporalAccessor accessor = timeFormatter.parse(startTime);
         Instant videoStartTime = Instant.from(accessor);

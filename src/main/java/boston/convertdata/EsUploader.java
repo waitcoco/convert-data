@@ -1,15 +1,11 @@
 package boston.convertdata;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import lombok.val;
-import org.apache.http.HttpHost;
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.xcontent.XContentType;
 
@@ -27,8 +23,8 @@ public class EsUploader implements AutoCloseable {
     private int count = 0;
     private static final Logger logger = Logger.getLogger(EsUploader.class.getName());
 
-    public EsUploader(String elasticSearchUrl, String indexName, String type, int batchSize) throws IOException {
-        esClient = new RestHighLevelClient(RestClient.builder(HttpHost.create(elasticSearchUrl)));
+    public EsUploader(RestHighLevelClient restHighLevelClient, String indexName, String type, int batchSize) throws IOException {
+        esClient = restHighLevelClient;
         this.indexName = indexName;
         this.type = type;
         this.batchSize = batchSize;

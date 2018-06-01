@@ -5,7 +5,7 @@ metadata:
   labels:
     app: boston-convertdata
 spec:
-  type: LoadBalancer
+  type: ClusterIP
   ports:
   - port: 80
     targetPort: 8080
@@ -37,4 +37,6 @@ spec:
           limits:
             cpu: 200m
             memory: 512Mi
-        args: []
+        args:
+        - --elasticsearch.url=http://47.104.22.92:9200
+        - --elasticsearch.indexName=video_data_v2_test
