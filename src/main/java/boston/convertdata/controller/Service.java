@@ -6,6 +6,7 @@ import boston.convertdata.model.*;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import lombok.Data;
 import lombok.val;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,7 +21,7 @@ import java.time.temporal.TemporalAccessor;
 import java.util.ArrayList;
 
 @RestController
-
+@Data
 public class Service {
     @PostMapping
     public ResponseEntity postController(
