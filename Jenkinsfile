@@ -4,6 +4,23 @@ String GIT_VERSION
 
 node {
   def buildEnv
+  def imageTag
+  def projectName = 'boston-convertdata'
+  def branchConfigMap = [
+    master: [
+      k8sServiceName: "${projectName}-prod",
+      envName: "prod"
+    ],
+    develop: [
+      k8sServiceName: "${projectName}-test",
+      envName: "test"
+    ]
+  ]
+
+  def branchConfig = branchConfigMap[env.BRANCH_NAME]
+  if (branchConfig == null) {
+    return
+  }
 
   stage ('Checkout') {
     checkout scm
@@ -32,20 +49,25 @@ node {
   withCredentials([string(credentialsId: 'registry-address', variable: 'registryAddress')]) {
     stage('docker build') {
       docker.withRegistry("${registryAddress}") {
-        if (env.BRANCH_NAME == 'master') {
-          docker.build("boston-convertdata:${uniqueId}").push()
-        }
+        imageTag="${projectName}:${uniqueId}"
+        docker.build(imageTag).push()
       }
     }
   }
 
-  if (env.BRANCH_NAME == 'master') {
+  if (branchConfig.k8sServiceName != null) {
     withCredentials([string(credentialsId: 'registry-address2', variable: 'registryAddress2')]) {
       stage('deploy') {
         docker.image('lachlanevenson/k8s-kubectl').inside {
           withCredentials(bindings: [[$class: "FileBinding", credentialsId: 'kubeconfig', variable: 'KUBE_CONFIG']]) {
             def kubectl = "kubectl --kubeconfig=\$KUBE_CONFIG"
-            sh "sed 's~SERVER_IMAGE_TAG_HERE~${registryAddress2}/boston-convertdata:${uniqueId}~g;' k8s.yml | ${kubectl} apply -f -"
+            sh """
+              cat k8s-${branchConfig.envName}.yml | \
+              sed 's~ENV_NAME~${branchConfig.envName}~g' | \
+              sed 's~SERVER_IMAGE_TAG_HERE~${registryAddress2}/${imageTag}~g' | \
+              sed 's~SERVICE_NAME_HERE~${branchConfig.k8sServiceName}~g' | \
+              ${kubectl} apply -f -
+            """
           }
         }
       }
