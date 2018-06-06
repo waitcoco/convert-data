@@ -1,11 +1,10 @@
 package boston.convertdata.controller;
 
-import boston.convertdata.model.elasticsearch.VideoInfo;
+import boston.convertdata.model.structured.Frame;
 import boston.convertdata.repository.EsUploader;
 import boston.convertdata.utils.GsonInstances;
 import boston.convertdata.repository.VideoInfoGetter;
 import boston.convertdata.model.elasticsearch.*;
-import boston.convertdata.model.structured.*;
 import lombok.val;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.time.Instant;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 
 @RestController
 public class ConvertController {
@@ -41,17 +41,18 @@ public class ConvertController {
     }
 
     @PostMapping
-    public void convert(@RequestBody Video video) throws Exception {
-        val pipelineVideo = videoInfoGetter.getVideo(video.getVideoInfo().getVideoId());
+    public void convert(@RequestBody boston.convertdata.model.structured.Video video) throws Exception {
+        val pipelineVideo = videoInfoGetter.getVideo(video.getVideoId());
         val pipelineCamera = videoInfoGetter.getCamera(pipelineVideo.getCameraId());
 
-        val records = new ArrayList<IndexRecord>();
+        val records = new ArrayList<Segment>();
 
         val videoInfo = new VideoInfo();
-        videoInfo.setVideoId(video.getVideoInfo().getVideoId());
+        videoInfo.setVideoId(video.getVideoId());
         videoInfo.setStartTime(pipelineVideo.getStartTime());
+        videoInfo.setVideoUrl(pipelineVideo.getPlaybackUrl());
 
-        val cameraPosition = new CameraPosition();
+        val cameraPosition = new Position();
         cameraPosition.setLat(pipelineCamera.getPositionLat());
         cameraPosition.setLon(pipelineCamera.getPositionLon());
         val cameraInfo = new CameraInfo();
@@ -59,23 +60,28 @@ public class ConvertController {
         cameraInfo.setCameraName(pipelineCamera.getName());
         cameraInfo.setPosition(cameraPosition);
 
-        if (video.getFramesInfo() != null) {
-            for (Frame frame : video.getFramesInfo()) {
-                val frameInfo = new FrameInfo();
-                frameInfo.setRelativeTime(frame.getFrameInfo().get(0).getRelativeTime());
-                frameInfo.setAbsoluteTime(getAbsoluteTime(videoInfo.getStartTime(), frameInfo.getRelativeTime()));
-
-                if (frame.getCars() != null) {
-                    for (boston.convertdata.model.structured.Car car : frame.getCars()) {
-                        records.add(new IndexRecord(car, videoInfo, cameraInfo, frameInfo));
-                    }
+        if (video.getSegmentsInfo() != null) {
+            for (boston.convertdata.model.structured.Segment segment : video.getSegmentsInfo()) {
+                if (segment.getFramesInfo() == null || segment.getFramesInfo().isEmpty()) {
+                    continue;
                 }
 
-                if (frame.getPeople() != null) {
-                    for (Person person : frame.getPeople()) {
-                        records.add(new IndexRecord(person, videoInfo, cameraInfo, frameInfo));
-                    }
-                }
+                val esSegment = new Segment();
+                esSegment.setSegmentId(segment.getSegmentId());
+                esSegment.setCameraInfo(cameraInfo);
+                esSegment.setVideoInfo(videoInfo);
+                esSegment.setCar(segment.getCar());
+                esSegment.setPerson(segment.getPerson());
+                esSegment.setFramesInfo(segment.getFramesInfo());
+
+                val firstFrame = segment.getFramesInfo().stream().min(Comparator.comparing(Frame::getRelativeTime)).get();
+                val lastFrame = segment.getFramesInfo().stream().max(Comparator.comparing(Frame::getRelativeTime)).get();
+                esSegment.setRelativeStartTime(firstFrame.getRelativeTime());
+                esSegment.setRelativeEndTime(lastFrame.getRelativeTime());
+                esSegment.setStartTime(getAbsoluteTime(videoInfo.getStartTime(), esSegment.getRelativeStartTime()));
+                esSegment.setEndTime(getAbsoluteTime(videoInfo.getStartTime(), esSegment.getRelativeEndTime()));
+
+                records.add(esSegment);
             }
         }
 

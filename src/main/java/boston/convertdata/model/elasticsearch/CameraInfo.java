@@ -6,6 +6,5 @@ import lombok.Data;
 public class CameraInfo {
     private String cameraId;
     private String cameraName;
-    private CameraPosition position;
-
+    private Position position;
 }
