@@ -44,7 +44,7 @@ public class VideoInfoGetter {
         try {
             val response = okHttpClient.newCall(request).execute();
             if (!response.isSuccessful()) {
-                throw new RuntimeException("failed response " + response.body().string());
+                throw new RuntimeException("failed response : " + response.toString());
             }
             return gson.fromJson(response.body().string(), classOfT);
         } catch (IOException e) {

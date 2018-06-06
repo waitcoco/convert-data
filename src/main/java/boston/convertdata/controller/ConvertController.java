@@ -95,7 +95,6 @@ public class ConvertController {
             for (Object record : records) {
                 String jsonRepresentation = GsonInstances.ELASTICSEARCH.toJson(record);
                 uploader.addJsonDocument(jsonRepresentation);
-                System.out.println(jsonRepresentation + "\n");
             }
             uploader.flush();
         }
