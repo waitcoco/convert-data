@@ -1,4 +1,4 @@
-package boston.convertdata.model;
+package boston.convertdata.model.structured;
 
 import lombok.Data;
 
@@ -6,6 +6,6 @@ import java.util.ArrayList;
 
 @Data
 public class Video {
-    private VideoInformation videoInfo;
+    private VideoInfo videoInfo;
     private ArrayList<Frame> framesInfo;
 }

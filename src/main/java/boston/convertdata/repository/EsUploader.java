@@ -1,4 +1,4 @@
-package boston.convertdata;
+package boston.convertdata.repository;
 
 import lombok.val;
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;

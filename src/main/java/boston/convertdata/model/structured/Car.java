@@ -1,4 +1,4 @@
-package boston.convertdata.model;
+package boston.convertdata.model.structured;
 
 import lombok.Data;
 
