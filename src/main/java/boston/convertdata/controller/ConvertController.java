@@ -92,9 +92,9 @@ public class ConvertController {
             if (!uploader.indexExists()) {
                 uploader.createIndex("camera_info.position", "type=geo_point");
             }
-            for (Object record : records) {
+            for (val record : records) {
                 String jsonRepresentation = GsonInstances.ELASTICSEARCH.toJson(record);
-                uploader.addJsonDocument(jsonRepresentation);
+                uploader.addJsonDocument(record.getSegmentId(), jsonRepresentation);
             }
             uploader.flush();
         }

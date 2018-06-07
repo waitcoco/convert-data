@@ -10,8 +10,7 @@ import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.xcontent.XContentType;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Logger;
 
 public class EsUploader implements AutoCloseable {
@@ -19,7 +18,7 @@ public class EsUploader implements AutoCloseable {
     private final String indexName;
     private final String type;
     private final int batchSize;
-    private final List<String> queue = new ArrayList<>();
+    private final Map<String, String> queue = new HashMap<>();
     private int count = 0;
     private static final Logger logger = Logger.getLogger(EsUploader.class.getName());
 
@@ -36,8 +35,8 @@ public class EsUploader implements AutoCloseable {
         return statusCode != 404;
     }
 
-    public void addJsonDocument(String json) throws IOException {
-        queue.add(json);
+    public void addJsonDocument(String id, String json) throws IOException {
+        queue.put(id, json);
         if (queue.size() >= batchSize) {
             flush();
         }
@@ -58,8 +57,8 @@ public class EsUploader implements AutoCloseable {
     public void flush() throws IOException {
         if (!queue.isEmpty()) {
             val bulkRequest = new BulkRequest();
-            queue.forEach(json -> {
-                val indexRequest = new IndexRequest(indexName, type).source(json, XContentType.JSON);
+            queue.forEach((id, json) -> {
+                val indexRequest = new IndexRequest(indexName, type, id).source(json, XContentType.JSON);
                 bulkRequest.add(indexRequest);
             });
             BulkResponse bulkResponse;
