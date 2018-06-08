@@ -4,11 +4,8 @@ metadata:
   name: SERVICE_NAME_HERE
   labels:
     app: SERVICE_NAME_HERE
-  annotations:
-    service.beta.kubernetes.io/alicloud-loadbalancer-address-type: intranet
-    service.beta.kubernetes.io/alicloud-loadbalancer-id: LOAD_BALANCER_ID_HERE
 spec:
-  type: LoadBalancer
+  type: ClusterIP
   ports:
   - port: 80
     targetPort: 8080

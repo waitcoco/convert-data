@@ -9,12 +9,10 @@ node {
   def branchConfigMap = [
     master: [
       k8sServiceName: "${projectName}-prod",
-      loadBalancerId: "lb-2ze5flo589fn16ch2cpyg",
       envName: "prod"
     ],
     develop: [
       k8sServiceName: "${projectName}-test",
-      loadBalancerId: "lb-2zeozia9b8u680yigb968",
       envName: "test"
     ]
   ]
@@ -64,11 +62,10 @@ node {
           withCredentials(bindings: [[$class: "FileBinding", credentialsId: 'kubeconfig', variable: 'KUBE_CONFIG']]) {
             def kubectl = "kubectl --kubeconfig=\$KUBE_CONFIG"
             sh """
-              cat k8s.yml | \
+              cat k8s-${branchConfig.envName}.yml | \
               sed 's~ENV_NAME_HERE~${branchConfig.envName}~g' | \
               sed 's~SERVER_IMAGE_TAG_HERE~${registryAddress2}/${imageTag}~g' | \
               sed 's~SERVICE_NAME_HERE~${branchConfig.k8sServiceName}~g' | \
-              sed 's~LOAD_BALANCER_ID_HERE~${branchConfig.loadBalancerId}~g' | \
               ${kubectl} apply -f -
             """
           }
