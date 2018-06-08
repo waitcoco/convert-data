@@ -43,4 +43,4 @@ spec:
         args:
         - --elasticsearch.url=http://47.104.22.92:9200
         - --elasticsearch.indexName=video_data_v2_ENV_NAME_HERE
-        - --videoInfo.url=http://boston-pipeline-ENV_NAME_HERE
+        - --videoInfo.url=http://boston-pipeline-ENV_NAME_HERE/db
