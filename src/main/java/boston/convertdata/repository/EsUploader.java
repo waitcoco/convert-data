@@ -22,7 +22,7 @@ public class EsUploader implements AutoCloseable {
     private int count = 0;
     private static final Logger logger = Logger.getLogger(EsUploader.class.getName());
 
-    public EsUploader(RestHighLevelClient restHighLevelClient, String indexName, String type, int batchSize) throws IOException {
+    public EsUploader(RestHighLevelClient restHighLevelClient, String indexName, String type, int batchSize) {
         esClient = restHighLevelClient;
         this.indexName = indexName;
         this.type = type;
@@ -44,6 +44,7 @@ public class EsUploader implements AutoCloseable {
 
     public void deleteIndex() throws IOException {
         esClient.indices().delete(new DeleteIndexRequest(indexName));
+        logger.info("Deleted index: " + indexName);
     }
 
     public void createIndex(Object... mapping) throws IOException {
@@ -52,6 +53,7 @@ public class EsUploader implements AutoCloseable {
             request.mapping(type, mapping);
         }
         esClient.indices().create(request);
+        logger.info("Created index: " + indexName);
     }
 
     public void flush() throws IOException {
