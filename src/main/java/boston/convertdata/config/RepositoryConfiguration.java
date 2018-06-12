@@ -9,11 +9,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.Arrays;
+
 @Configuration
 public class RepositoryConfiguration {
     @Bean
-    public RestHighLevelClient restHighLevelClient(@Value("${elasticsearch.url}") String elasticsearchUrl) {
-        return new RestHighLevelClient(RestClient.builder(HttpHost.create(elasticsearchUrl)));
+    public RestHighLevelClient restHighLevelClient(@Value("${elasticsearch.host}") String[] elasticsearchHosts) {
+        return new RestHighLevelClient(RestClient.builder(Arrays.stream(elasticsearchHosts).map(HttpHost::create).toArray(HttpHost[]::new)));
     }
 
     @Bean

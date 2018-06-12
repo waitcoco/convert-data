@@ -41,6 +41,6 @@ spec:
             cpu: 500m
             memory: 1Gi
         args:
-        - --elasticsearch.url=http://47.104.22.92:9200
+        - --elasticsearch.host=http://192.168.177.201:9200,http://192.168.177.227:9200
         - --elasticsearch.indexName=video_data_v2_ENV_NAME_HERE
         - --videoInfo.url=http://boston-pipeline-ENV_NAME_HERE/db
