@@ -1,14 +1,10 @@
-package boston.convertdata.model;
+package boston.convertdata.model.structured;
 
 import lombok.Data;
 
 @Data
 public class Person {
     private String personId;
-    private String personLeftbottom;
-    private String personLefttop;
-    private String personRightbottom;
-    private String personRighttop;
     private String coatColor;
     private String pantsColor;
     private String bodyType;

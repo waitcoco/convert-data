@@ -1,4 +1,4 @@
-package boston.convertdata;
+package boston.convertdata.repository;
 
 import lombok.val;
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
@@ -10,8 +10,7 @@ import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.xcontent.XContentType;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Logger;
 
 public class EsUploader implements AutoCloseable {
@@ -19,11 +18,11 @@ public class EsUploader implements AutoCloseable {
     private final String indexName;
     private final String type;
     private final int batchSize;
-    private final List<String> queue = new ArrayList<>();
+    private final Map<String, String> queue = new HashMap<>();
     private int count = 0;
     private static final Logger logger = Logger.getLogger(EsUploader.class.getName());
 
-    public EsUploader(RestHighLevelClient restHighLevelClient, String indexName, String type, int batchSize) throws IOException {
+    public EsUploader(RestHighLevelClient restHighLevelClient, String indexName, String type, int batchSize) {
         esClient = restHighLevelClient;
         this.indexName = indexName;
         this.type = type;
@@ -36,8 +35,8 @@ public class EsUploader implements AutoCloseable {
         return statusCode != 404;
     }
 
-    public void addJsonDocument(String json) throws IOException {
-        queue.add(json);
+    public void addJsonDocument(String id, String json) throws IOException {
+        queue.put(id, json);
         if (queue.size() >= batchSize) {
             flush();
         }
@@ -45,6 +44,7 @@ public class EsUploader implements AutoCloseable {
 
     public void deleteIndex() throws IOException {
         esClient.indices().delete(new DeleteIndexRequest(indexName));
+        logger.info("Deleted index: " + indexName);
     }
 
     public void createIndex(Object... mapping) throws IOException {
@@ -53,13 +53,14 @@ public class EsUploader implements AutoCloseable {
             request.mapping(type, mapping);
         }
         esClient.indices().create(request);
+        logger.info("Created index: " + indexName);
     }
 
     public void flush() throws IOException {
         if (!queue.isEmpty()) {
             val bulkRequest = new BulkRequest();
-            queue.forEach(json -> {
-                val indexRequest = new IndexRequest(indexName, type).source(json, XContentType.JSON);
+            queue.forEach((id, json) -> {
+                val indexRequest = new IndexRequest(indexName, type, id).source(json, XContentType.JSON);
                 bulkRequest.add(indexRequest);
             });
             BulkResponse bulkResponse;

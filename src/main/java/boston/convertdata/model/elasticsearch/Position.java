@@ -1,9 +1,9 @@
-package boston.convertdata.model;
+package boston.convertdata.model.elasticsearch;
 
 import lombok.Data;
 
 @Data
-public class CameraPosition {
+public class Position {
     private double lat;
     private double lon;
 }

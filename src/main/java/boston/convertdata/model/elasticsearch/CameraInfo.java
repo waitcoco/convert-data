@@ -1,4 +1,4 @@
-package boston.convertdata.model;
+package boston.convertdata.model.elasticsearch;
 
 import lombok.Data;
 
@@ -6,6 +6,5 @@ import lombok.Data;
 public class CameraInfo {
     private String cameraId;
     private String cameraName;
-    private CameraPosition position;
-
+    private Position position;
 }
