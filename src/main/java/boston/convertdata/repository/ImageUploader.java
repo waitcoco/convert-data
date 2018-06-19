@@ -29,7 +29,7 @@ public class ImageUploader {
                 .build();
 
         Request request = new Request.Builder()
-                .url(UriComponentsBuilder.fromHttpUrl(uploadBaseUrl).path("/").path(filename + ".jpeg").queryParam("token", uploadToken).toUriString())
+                .url(UriComponentsBuilder.fromHttpUrl(uploadBaseUrl).path("/").path(filename).queryParam("token", uploadToken).toUriString())
                 .put(requestBody)
                 .build();
 
@@ -46,29 +46,5 @@ public class ImageUploader {
         return UriComponentsBuilder.fromHttpUrl(playbackUrl).path("/").path(filename).toUriString();
     }
 
-
-//    private byte[] readFile(String s) {
-//        byte[] imageContents = null;
-//        try {
-//            Path path = Paths.get(s);
-//            imageContents = Files.readAllBytes(path);
-//        } catch (IOException e) {
-//            log.info(e);
-//        }
-//        return imageContents;
-//    }
-
-//    public File decoder(String base64Image, String filename) {
-//        File file = new File(cachePath + "/" + filename);
-//        try (FileOutputStream imageOutFile = new FileOutputStream(file)) {
-//            byte[] imageByteArray = Base64.getDecoder().decode(base64Image);
-//            imageOutFile.write(imageByteArray);
-//        } catch (FileNotFoundException e) {
-//            log.info("Image not found" + e);
-//        } catch (IOException ioe) {
-//            log.info("Exception while reading the Image " + ioe);
-//        }
-//        return file;
-//    }
 
 }
