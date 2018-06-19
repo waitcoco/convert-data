@@ -22,4 +22,6 @@ public class Segment {
     private List<Frame> framesInfo;
     private Car car;
     private Person person;
+
+    private String objectImgUrl;
 }
