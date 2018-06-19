@@ -35,8 +35,7 @@ public class RepositoryConfiguration {
     @Bean
     public ImageUploader imageUploader(@Value("${image.uploadBaseUrl}") String uploadBaseUrl,
                                        @Value("${image.uploadToken}") String uploadToken,
-                                       @Value("${image.cachePath}") String cachePath,
                                        @Value("${image.playbackUrl}") String playbackUrl) {
-        return new ImageUploader(uploadBaseUrl, uploadToken, cachePath, playbackUrl);
+        return new ImageUploader(uploadBaseUrl, uploadToken, playbackUrl);
     }
 }

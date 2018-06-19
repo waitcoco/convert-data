@@ -69,7 +69,7 @@ public class ConvertController {
                 esSegment.setFramesInfo(segment.getFramesInfo());
 
                 // 上传图片, 获得objectImgUrl
-                String objectImgUrl = uploadImage(segment.getObjectImg(), "segment-" + segment.getSegmentId() + ".jpeg");
+                String objectImgUrl = imageUploader.uploadImage(segment.getObjectImg(), "segment-" + segment.getSegmentId() + ".jpeg");
                 esSegment.setObjectImgUrl(objectImgUrl);
 
                 val firstFrame = segment.getFramesInfo().stream().min(Comparator.comparing(Frame::getRelativeTime)).get();
@@ -102,10 +102,5 @@ public class ConvertController {
     public void deleteIndex() throws IOException {
         uploader.deleteIndex();
     }
-
-    private String uploadImage(String base64Image, String filename) throws IOException {
-        return imageUploader.uploadImage(imageUploader.decoder(base64Image, filename));
-    }
-
 
 }
