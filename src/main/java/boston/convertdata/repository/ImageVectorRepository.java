@@ -5,6 +5,7 @@ import lombok.extern.log4j.Log4j2;
 import okhttp3.*;
 
 import java.io.*;
+import java.nio.file.Paths;
 import java.util.Map;
 
 @Log4j2
@@ -51,11 +52,11 @@ public class ImageVectorRepository {
                 sb.append(vector);
                 sb.append(" ");
             }
-            sb.append("\r\n");
+            sb.append("\n");
         }
 
         // 写入文件
-        File file = new File(cachePath + "/" + videoId + ".text.temp"); // videoId作文件名, .temp避免正在写入时被扫描
+        File file = new File(Paths.get(cachePath, videoId + ".text.temp").toString()); // videoId作文件名, .temp避免正在写入时被扫描
         FileOutputStream fos;
         if (!file.exists()) {
             log.info("Create new file.");
@@ -70,8 +71,7 @@ public class ImageVectorRepository {
         }
 
         // 写完后, 将文件名最后.temp去掉
-        int end = file.getAbsolutePath().length() - 5;
-        file.renameTo(new File(file.getAbsolutePath().substring(0, end))); // 移除.temp
+        file.renameTo(new File(Paths.get(cachePath, videoId + ".text").toString())); // 移除.temp
 
         log.info("Vector save to file succeeded.");
     }
