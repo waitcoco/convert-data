@@ -77,7 +77,8 @@ public class ConvertController {
 
                 // 上传图片, 获得objectImgUrl
                 String filename = "segment-" + segment.getSegmentId() + ".jpeg";
-                String objectImgUrl = imageUploader.uploadImage(segment.getObjectImg(), filename);
+                val objectImageBytes = Base64.getDecoder().decode(segment.getObjectImg());
+                String objectImgUrl = imageUploader.uploadImage(objectImageBytes, filename);
                 esSegment.setObjectImgUrl(objectImgUrl);
 
                 val firstFrame = segment.getFramesInfo().stream().min(Comparator.comparing(Frame::getRelativeTime)).get();
@@ -90,7 +91,7 @@ public class ConvertController {
                 records.add(esSegment);
 
                 // 得到缩略图向量
-                vectorMap.put(segment.getSegmentId(), imageVectorRepository.getImageVector(filename, segment.getObjectImg()));
+                vectorMap.put(segment.getSegmentId(), imageVectorRepository.getImageVector(filename, objectImageBytes));
             }
             // 一个video的所有segment缩略图, 写入文件
             imageVectorRepository.saveVectorToFile(vectorMap, video.getVideoId());
