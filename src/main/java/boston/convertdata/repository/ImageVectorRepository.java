@@ -44,7 +44,7 @@ public class ImageVectorRepository {
         return new Gson().fromJson(response.body() != null ? response.body().string() : null, double[].class);
     }
 
-    public File saveVectorForOneImage(double[] vectors, String filename, String segmentId) throws IOException {
+    public File saveVectorToFile(double[] vectors, String filename, String segmentId) throws IOException {
         // 要写入的字符串
         StringBuilder sb = new StringBuilder(segmentId);
         sb.append(" ");

@@ -88,7 +88,7 @@ public class ConvertController {
                 records.add(esSegment);
 
                 // 一个segment获取缩略图向量, 并写入所属video的文件
-                vectorFile = processVector(segment, video.getVideoId());
+                vectorFile = processVectorForOneImage(segment, video.getVideoId());
             }
 
             // 一个video的所有segment写完后, 将文件名最后.temp去掉
@@ -115,12 +115,12 @@ public class ConvertController {
         uploader.deleteIndex();
     }
 
-    private File processVector(boston.convertdata.model.structured.Segment segment, String videoId) throws IOException {
+    private File processVectorForOneImage(boston.convertdata.model.structured.Segment segment, String videoId) throws IOException {
         String objectType = segment.getCar() != null ? "car" : "person";
         // 获得一张缩略图向量
         double[] vector = imageVectorRepository.getImageVector(objectType, "segment-" + segment.getSegmentId() + ".jpeg", segment.getObjectImg());
         // 将该向量写入文件
-        return imageVectorRepository.saveVectorForOneImage(vector, videoId + ".text.temp", segment.getSegmentId());
+        return imageVectorRepository.saveVectorToFile(vector, videoId + ".text.temp", segment.getSegmentId());
     }
 
 }
