@@ -1,7 +1,6 @@
 package boston.convertdata.controller;
 
 import boston.convertdata.model.structured.Frame;
-import boston.convertdata.model.structured.Video;
 import boston.convertdata.repository.EsUploader;
 import boston.convertdata.repository.ImageUploader;
 import boston.convertdata.repository.ImageVectorRepository;
