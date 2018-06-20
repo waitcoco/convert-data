@@ -2,6 +2,7 @@ package boston.convertdata.config;
 
 import boston.convertdata.repository.EsUploader;
 import boston.convertdata.repository.ImageUploader;
+import boston.convertdata.repository.ImageVectorRepository;
 import boston.convertdata.repository.VideoInfoGetter;
 import org.apache.http.HttpHost;
 import org.elasticsearch.client.RestClient;
@@ -37,5 +38,12 @@ public class RepositoryConfiguration {
                                        @Value("${image.uploadToken}") String uploadToken,
                                        @Value("${image.playbackUrl}") String playbackUrl) {
         return new ImageUploader(uploadBaseUrl, uploadToken, playbackUrl);
+    }
+
+    @Bean
+    public ImageVectorRepository imageVectorRepository(@Value("${image.vectorCarUrl}") String carVectorUrl,
+                                                       @Value("${image.vectorPersonUrl}") String personVectorUrl,
+                                                       @Value("${image.vectorCachePath}") String cachePath) {
+        return new ImageVectorRepository(carVectorUrl, personVectorUrl, cachePath);
     }
 }
