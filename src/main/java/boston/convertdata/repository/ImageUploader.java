@@ -1,8 +1,8 @@
 package boston.convertdata.repository;
 
 import lombok.extern.log4j.Log4j2;
+import lombok.val;
 import okhttp3.*;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 
@@ -21,6 +21,7 @@ public class ImageUploader {
         this.httpClient = new OkHttpClient();
     }
 
+
     // byte[] multipart-formdata 直接上传byte数组
     public String uploadImage(byte[] bytes, String filename) throws IOException {
         RequestBody requestBody = new MultipartBody.Builder()
@@ -28,23 +29,23 @@ public class ImageUploader {
                 .addFormDataPart("file", filename, RequestBody.create(MediaType.parse("application/octet-stream"), bytes))
                 .build();
 
+        // 上传图片链接
+        val url = HttpUrl.parse(uploadBaseUrl).newBuilder().addPathSegment(filename).addQueryParameter("token", uploadToken).build();
         Request request = new Request.Builder()
-                .url(UriComponentsBuilder.fromHttpUrl(uploadBaseUrl).path("/").path(filename).queryParam("token", uploadToken).toUriString())
+                .url(url)
                 .put(requestBody)
                 .build();
-
-        log.info("upload video to: " + UriComponentsBuilder.fromHttpUrl(uploadBaseUrl).path("/").path(filename).queryParam("token", uploadToken).toUriString());
+        log.info("upload video to: " + url);
 
         Response response = httpClient.newCall(request).execute();
 
         if (!response.isSuccessful()) {
             throw new IOException("upload failed. " + response.toString());
         }
-
         log.info("upload succeeded. ");
 
-        return UriComponentsBuilder.fromHttpUrl(playbackUrl).path("/").path(filename).toUriString();
+        // 返回查看图片链接
+        return HttpUrl.parse(playbackUrl).newBuilder().addPathSegment(filename).toString();
     }
-
 
 }
