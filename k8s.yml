@@ -1,4 +1,32 @@
 apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: boston-convertdata
+spec:
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  claimRef:
+    namespace: default
+    name: boston-convertdata
+  nfs:
+    path: /boston-convertdata/
+    server: 176b7485de-dub27.cn-beijing.nas.aliyuncs.com
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: boston-convertdata
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: v1
 kind: Service
 metadata:
   name: SERVICE_NAME_HERE
@@ -48,5 +76,12 @@ spec:
         - --image.uploadBaseUrl=http://video-host.test.richinfoai.com:81/files
         - --image.uploadToken=8e782d5d-adda-4de2-a62f-a8e510cc490a
         - --image.vectorUrl=http://39.105.84.135:8094/image2vector/car
-        - --image.vectorCachePath=
-
+        - --image.vectorCachePath=/var/lib/vector
+        volumeMounts:
+        - name: boston-convertdata
+          mountPath: /var/lib/vector
+          subPath: vector
+      volumes:
+      - name: boston-convertdata
+        persistentVolumeClaim:
+          claimName: boston-convertdata
