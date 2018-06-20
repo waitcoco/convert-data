@@ -7,19 +7,20 @@ import boston.convertdata.repository.ImageVectorRepository;
 import boston.convertdata.utils.GsonInstances;
 import boston.convertdata.repository.VideoInfoGetter;
 import boston.convertdata.model.elasticsearch.*;
+import lombok.extern.log4j.Log4j2;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.File;
 import java.io.IOException;
 import java.time.Instant;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Comparator;
+import java.util.*;
 
+@Log4j2
 @RestController
 public class ConvertController {
 
@@ -27,16 +28,19 @@ public class ConvertController {
     private final VideoInfoGetter videoInfoGetter;
     private final ImageUploader imageUploader;
     private final ImageVectorRepository imageVectorRepository;
+    private final String cachePath;
 
     @Autowired
     public ConvertController(EsUploader uploader,
                              VideoInfoGetter videoInfoGetter,
                              ImageUploader imageUploader,
-                             ImageVectorRepository imageVectorRepository) {
+                             ImageVectorRepository imageVectorRepository,
+                             @Value("${image.vectorCachePath}") String cachePath) {
         this.uploader = uploader;
         this.videoInfoGetter = videoInfoGetter;
         this.imageUploader = imageUploader;
         this.imageVectorRepository = imageVectorRepository;
+        this.cachePath = cachePath;
     }
 
     @PostMapping
@@ -60,7 +64,7 @@ public class ConvertController {
         cameraInfo.setPosition(cameraPosition);
 
         if (video.getSegmentsInfo() != null) {
-            File vectorFile = null;
+            Map<String, double[]> vectorMap = new HashMap<>();
             for (boston.convertdata.model.structured.Segment segment : video.getSegmentsInfo()) {
                 if (segment.getFramesInfo() == null || segment.getFramesInfo().isEmpty()) {
                     continue;
@@ -75,7 +79,8 @@ public class ConvertController {
                 esSegment.setFramesInfo(segment.getFramesInfo());
 
                 // 上传图片, 获得objectImgUrl
-                String objectImgUrl = imageUploader.uploadImage(segment.getObjectImg(), "segment-" + segment.getSegmentId() + ".jpeg");
+                String filename = "segment-" + segment.getSegmentId() + ".jpeg";
+                String objectImgUrl = imageUploader.uploadImage(segment.getObjectImg(), filename);
                 esSegment.setObjectImgUrl(objectImgUrl);
 
                 val firstFrame = segment.getFramesInfo().stream().min(Comparator.comparing(Frame::getRelativeTime)).get();
@@ -87,13 +92,11 @@ public class ConvertController {
 
                 records.add(esSegment);
 
-                // 一个segment获取缩略图向量, 并写入所属video的文件
-                vectorFile = processVectorForOneImage(segment, video.getVideoId());
+                // 得到缩略图向量
+                vectorMap.put(segment.getSegmentId(), imageVectorRepository.getImageVector(filename, segment.getObjectImg()));
             }
-
-            // 一个video的所有segment写完后, 将文件名最后.temp去掉
-            int end = vectorFile.getAbsolutePath().length() - 5;
-            vectorFile.renameTo(new File(vectorFile.getAbsolutePath().substring(0, end))); // 移除.temp
+            // 一个video的所有segment缩略图, 写入文件
+            imageVectorRepository.saveVectorToFile(vectorMap, video.getVideoId());
         }
 
         if (!uploader.indexExists()) {
@@ -113,14 +116,6 @@ public class ConvertController {
     @PostMapping("deleteIndex")
     public void deleteIndex() throws IOException {
         uploader.deleteIndex();
-    }
-
-    private File processVectorForOneImage(boston.convertdata.model.structured.Segment segment, String videoId) throws IOException {
-        String objectType = segment.getCar() != null ? "car" : "person";
-        // 获得一张缩略图向量
-        double[] vector = imageVectorRepository.getImageVector(objectType, "segment-" + segment.getSegmentId() + ".jpeg", segment.getObjectImg());
-        // 将该向量写入文件
-        return imageVectorRepository.saveVectorToFile(vector, videoId + ".text.temp", segment.getSegmentId());
     }
 
 }

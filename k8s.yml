@@ -47,7 +47,6 @@ spec:
         - --image.playbackUrl=http://video-host.test.richinfoai.com
         - --image.uploadBaseUrl=http://video-host.test.richinfoai.com:81/files
         - --image.uploadToken=8e782d5d-adda-4de2-a62f-a8e510cc490a
-        - --image.vectorCarUrl=http://39.105.84.135:8094/image2vector/car
-        - --image.vectorPersonUrl=http://39.105.84.135:8098/image2vector/person
+        - --image.vectorUrl=http://39.105.84.135:8094/image2vector/car
         - --image.vectorCachePath=
 

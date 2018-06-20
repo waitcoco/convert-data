@@ -41,9 +41,8 @@ public class RepositoryConfiguration {
     }
 
     @Bean
-    public ImageVectorRepository imageVectorRepository(@Value("${image.vectorCarUrl}") String carVectorUrl,
-                                                       @Value("${image.vectorPersonUrl}") String personVectorUrl,
-                                                       @Value("${image.vectorCachePath}") String cachePath) {
-        return new ImageVectorRepository(carVectorUrl, personVectorUrl, cachePath);
+    public ImageVectorRepository imageVectorRepository(@Value("${image.vectorUrl}") String vectorUrl,
+                                                       @Value("${image.cachePath}") String cachePath) {
+        return new ImageVectorRepository(vectorUrl, cachePath);
     }
 }
