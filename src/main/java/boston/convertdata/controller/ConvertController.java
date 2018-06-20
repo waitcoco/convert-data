@@ -28,19 +28,16 @@ public class ConvertController {
     private final VideoInfoGetter videoInfoGetter;
     private final ImageUploader imageUploader;
     private final ImageVectorRepository imageVectorRepository;
-    private final String cachePath;
 
     @Autowired
     public ConvertController(EsUploader uploader,
                              VideoInfoGetter videoInfoGetter,
                              ImageUploader imageUploader,
-                             ImageVectorRepository imageVectorRepository,
-                             @Value("${image.vectorCachePath}") String cachePath) {
+                             ImageVectorRepository imageVectorRepository) {
         this.uploader = uploader;
         this.videoInfoGetter = videoInfoGetter;
         this.imageUploader = imageUploader;
         this.imageVectorRepository = imageVectorRepository;
-        this.cachePath = cachePath;
     }
 
     @PostMapping
