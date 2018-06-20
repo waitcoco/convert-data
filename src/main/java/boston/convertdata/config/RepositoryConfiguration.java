@@ -42,7 +42,7 @@ public class RepositoryConfiguration {
 
     @Bean
     public ImageVectorRepository imageVectorRepository(@Value("${image.vectorUrl}") String vectorUrl,
-                                                       @Value("${image.cachePath}") String cachePath) {
+                                                       @Value("${image.vectorCachePath}") String cachePath) {
         return new ImageVectorRepository(vectorUrl, cachePath);
     }
 }
