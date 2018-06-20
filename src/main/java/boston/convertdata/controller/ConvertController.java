@@ -2,6 +2,7 @@ package boston.convertdata.controller;
 
 import boston.convertdata.model.structured.Frame;
 import boston.convertdata.repository.EsUploader;
+import boston.convertdata.repository.ImageUploader;
 import boston.convertdata.utils.GsonInstances;
 import boston.convertdata.repository.VideoInfoGetter;
 import boston.convertdata.model.elasticsearch.*;
@@ -22,12 +23,15 @@ public class ConvertController {
 
     private final EsUploader uploader;
     private final VideoInfoGetter videoInfoGetter;
+    private final ImageUploader imageUploader;
 
     @Autowired
     public ConvertController(EsUploader uploader,
-                             VideoInfoGetter videoInfoGetter) {
+                             VideoInfoGetter videoInfoGetter,
+                             ImageUploader imageUploader) {
         this.uploader = uploader;
         this.videoInfoGetter = videoInfoGetter;
+        this.imageUploader = imageUploader;
     }
 
     @PostMapping
@@ -64,6 +68,10 @@ public class ConvertController {
                 esSegment.setPerson(segment.getPerson());
                 esSegment.setFramesInfo(segment.getFramesInfo());
 
+                // 上传图片, 获得objectImgUrl
+                String objectImgUrl = imageUploader.uploadImage(segment.getObjectImg(), "segment-" + segment.getSegmentId() + ".jpeg");
+                esSegment.setObjectImgUrl(objectImgUrl);
+
                 val firstFrame = segment.getFramesInfo().stream().min(Comparator.comparing(Frame::getRelativeTime)).get();
                 val lastFrame = segment.getFramesInfo().stream().max(Comparator.comparing(Frame::getRelativeTime)).get();
                 esSegment.setRelativeStartTime(firstFrame.getRelativeTime());
@@ -86,7 +94,7 @@ public class ConvertController {
         uploader.flush();
     }
 
-    private static Instant getAbsoluteTime(Instant startTime, LocalTime relativeTime){
+    private static Instant getAbsoluteTime(Instant startTime, LocalTime relativeTime) {
         return startTime.plusNanos(relativeTime.toNanoOfDay());
     }
 
@@ -94,4 +102,5 @@ public class ConvertController {
     public void deleteIndex() throws IOException {
         uploader.deleteIndex();
     }
+
 }

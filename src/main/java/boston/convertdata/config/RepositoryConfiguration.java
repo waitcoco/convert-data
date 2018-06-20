@@ -1,6 +1,7 @@
 package boston.convertdata.config;
 
 import boston.convertdata.repository.EsUploader;
+import boston.convertdata.repository.ImageUploader;
 import boston.convertdata.repository.VideoInfoGetter;
 import org.apache.http.HttpHost;
 import org.elasticsearch.client.RestClient;
@@ -29,5 +30,12 @@ public class RepositoryConfiguration {
     @Bean
     public VideoInfoGetter videoInfoGetter(@Value("${videoInfo.url}") String videoInfoUrl) {
         return new VideoInfoGetter(videoInfoUrl);
+    }
+
+    @Bean
+    public ImageUploader imageUploader(@Value("${image.uploadBaseUrl}") String uploadBaseUrl,
+                                       @Value("${image.uploadToken}") String uploadToken,
+                                       @Value("${image.playbackUrl}") String playbackUrl) {
+        return new ImageUploader(uploadBaseUrl, uploadToken, playbackUrl);
     }
 }
