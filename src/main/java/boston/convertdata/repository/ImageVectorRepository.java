@@ -45,7 +45,7 @@ public class ImageVectorRepository {
     public void saveVectorToFile(Map<String, double[]> vectorMap, String videoId) throws IOException {
         // 写入文件
         File file = new File(Paths.get(cachePath, videoId + ".txt.tmp").toString()); // videoId作文件名, .tmp避免正在写入时被扫描
-        try (PrintWriter out = new PrintWriter(Paths.get(cachePath, videoId + ".txt.tmp").toString())) {
+        try (PrintWriter out = new PrintWriter(file)) {
             for (String segmentId : vectorMap.keySet()) {
                 out.write(segmentId);
                 for (double vector : vectorMap.get(segmentId)) {
