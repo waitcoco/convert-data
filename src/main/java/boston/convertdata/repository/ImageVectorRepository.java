@@ -43,36 +43,19 @@ public class ImageVectorRepository {
     }
 
     public void saveVectorToFile(Map<String, double[]> vectorMap, String videoId) throws IOException {
-        // 要写入的字符串
-        StringBuilder sb = new StringBuilder();
-        for (String segmentId : vectorMap.keySet()) {
-            sb.append(segmentId);
-            sb.append(" ");
-            for (double vector : vectorMap.get(segmentId)) {
-                sb.append(vector);
-                sb.append(" ");
-            }
-            sb.append("\n");
-        }
-
         // 写入文件
-        File file = new File(Paths.get(cachePath, videoId + ".text.temp").toString()); // videoId作文件名, .temp避免正在写入时被扫描
-        FileOutputStream fos;
-        if (!file.exists()) {
-            log.info("Create new file.");
-            file.createNewFile();
-            fos = new FileOutputStream(file);
-        } else {
-            log.info("File already exists, append to the end.");
-            fos = new FileOutputStream(file, true);
+        File file = new File(Paths.get(cachePath, videoId + ".txt.tmp").toString()); // videoId作文件名, .tmp避免正在写入时被扫描
+        try (PrintWriter out = new PrintWriter(Paths.get(cachePath, videoId + ".txt.tmp").toString())) {
+            for (String segmentId : vectorMap.keySet()) {
+                out.write(segmentId);
+                for (double vector : vectorMap.get(segmentId)) {
+                    out.write(" " + vector);
+                }
+                out.write("\n");
+            }
         }
-        try (OutputStreamWriter osw = new OutputStreamWriter(fos)) {
-            osw.write(sb.toString());
-        }
-
-        // 写完后, 将文件名最后.temp去掉
-        file.renameTo(new File(Paths.get(cachePath, videoId + ".text").toString())); // 移除.temp
-
+        // 写完后, 将文件名最后.tmp去掉
+        file.renameTo(new File(Paths.get(cachePath, videoId + ".txt").toString())); // 移除.tmp
         log.info("Vector save to file succeeded.");
     }
 
