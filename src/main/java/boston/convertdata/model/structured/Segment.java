@@ -10,4 +10,6 @@ public class Segment {
     private Car car;
     private Person person;
     private List<Frame> framesInfo;
+    private String objectImg;
+
 }
