@@ -69,7 +69,7 @@ node {
               sed 's~ENV_NAME_HERE~${branchConfig.envName}~g' | \
               sed 's~SERVER_IMAGE_TAG_HERE~${registryAddress2}/${imageTag}~g' | \
               sed 's~SERVICE_NAME_HERE~${branchConfig.k8sServiceName}~g' | \
-              sed 's~HIGH_DIMENSION_SERVICE_NAME_HERE~${branchConfig.k8sHighDimensionServiceName}~g' | \
+              sed 's~HIGH_DIMENSION_NAME_HERE~${branchConfig.k8sHighDimensionServiceName}~g' | \
               ${kubectl} apply -f -
             """
           }

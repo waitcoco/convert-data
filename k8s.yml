@@ -50,10 +50,10 @@ spec:
         - --image.vectorUrl=http://greenland-image2vector-test/image2vector/car
         - --image.vectorCachePath=/var/lib/vector
         volumeMounts:
-        - name: HIGH_DIMENSION_SERVICE_NAME_HERE
+        - name: HIGH_DIMENSION_NAME_HERE
           mountPath: /var/lib/vector
           subPath: vector
       volumes:
-      - name: HIGH_DIMENSION_SERVICE_NAME_HERE
+      - name: HIGH_DIMENSION_NAME_HERE
         persistentVolumeClaim:
-          claimName: HIGH_DIMENSION_SERVICE_NAME_HERE
+          claimName: HIGH_DIMENSION_NAME_HERE
