@@ -100,11 +100,13 @@ public class ConvertController {
         if (!uploader.indexExists()) {
             uploader.createIndex("camera_info.position", "type=geo_point");
         }
-        for (val record : records) {
-            String jsonRepresentation = GsonInstances.ELASTICSEARCH.toJson(record);
-            uploader.addJsonDocument(record.getSegmentId(), jsonRepresentation);
+
+        try (val session = uploader.newSession()) {
+            for (val record : records) {
+                String jsonRepresentation = GsonInstances.ELASTICSEARCH.toJson(record);
+                session.addJsonDocument(record.getSegmentId(), jsonRepresentation);
+            }
         }
-        uploader.flush();
     }
 
     private static Instant getAbsoluteTime(Instant startTime, LocalTime relativeTime) {
