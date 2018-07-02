@@ -1,32 +1,4 @@
 apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: boston-convertdata
-spec:
-  capacity:
-    storage: 5Gi
-  accessModes:
-    - ReadWriteMany
-  persistentVolumeReclaimPolicy: Retain
-  claimRef:
-    namespace: default
-    name: boston-convertdata
-  nfs:
-    path: /boston-convertdata/
-    server: 176b7485de-dub27.cn-beijing.nas.aliyuncs.com
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: boston-convertdata
-spec:
-  accessModes:
-    - ReadWriteMany
-  resources:
-    requests:
-      storage: 5Gi
----
-apiVersion: v1
 kind: Service
 metadata:
   name: SERVICE_NAME_HERE
@@ -78,10 +50,10 @@ spec:
         - --image.vectorUrl=http://greenland-image2vector-test/image2vector/car
         - --image.vectorCachePath=/var/lib/vector
         volumeMounts:
-        - name: boston-convertdata
+        - name: HIGH_DIMENSION_SERVICE_NAME_HERE
           mountPath: /var/lib/vector
           subPath: vector
       volumes:
-      - name: boston-convertdata
+      - name: HIGH_DIMENSION_SERVICE_NAME_HERE
         persistentVolumeClaim:
-          claimName: boston-convertdata
+          claimName: HIGH_DIMENSION_SERVICE_NAME_HERE
