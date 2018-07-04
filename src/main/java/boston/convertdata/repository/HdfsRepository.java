@@ -70,13 +70,5 @@ public class HdfsRepository extends Configured {
         }
     }
 
-    public static void main(String[] args) {
-        try {
-            new HdfsRepository("cdh1:8020", "/Users/bingjing/Documents/hadoop-cdh-conf").convertHdfsFile2Video("/user/video/2018-07-04/47b549bf-e2d6-4555-9e10-f0a9222c9af3.json");
-            // new HdfsRepository("cdh1:50070").convertHdfsFile2Video("/user/video/2018-07-03/37ccd554-1311-4b7f-88ae-809f9d3ad839.json");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
 }
