@@ -7,16 +7,19 @@ node {
   def imageTag
   def projectName = 'boston-convertdata'
   def highDimensionServiceName = 'greenland-high-dimension'
+  def mountName = 'boston-convertdata-data'
   def branchConfigMap = [
     master: [
       k8sServiceName: "${projectName}-prod",
       k8sHighDimensionServiceName: "${highDimensionServiceName}-prod",
-      envName: "prod"
+      envName: "prod",
+      mountName: "${mountName}"
     ],
     develop: [
       k8sServiceName: "${projectName}-test",
       k8sHighDimensionServiceName: "${highDimensionServiceName}-test",
-      envName: "test"
+      envName: "test",
+      mountName: "${mountName}"
     ]
   ]
 
@@ -70,6 +73,7 @@ node {
               sed 's~SERVER_IMAGE_TAG_HERE~${registryAddress2}/${imageTag}~g' | \
               sed 's~SERVICE_NAME_HERE~${branchConfig.k8sServiceName}~g' | \
               sed 's~HIGH_DIMENSION_NAME_HERE~${branchConfig.k8sHighDimensionServiceName}~g' | \
+              sed 's~MOUNT_NAME~${branchConfig.mountName}~g' | \\
               ${kubectl} apply -f -
             """
           }
