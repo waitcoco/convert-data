@@ -39,6 +39,9 @@ dependencies {
     compile group: 'org.apache.hadoop', name: 'hadoop-auth', version: '2.6.0'
     compile group: 'com.cloudera.cdh', name: 'cdh-root', version: '5.8.0'
 
+    compile group: 'org.apache.hadoop', name: 'hadoop-common', version: '3.0.0'
+    compile group: 'org.apache.hadoop', name: 'hadoop-hdfs-client', version: '3.0.0'
+
     testCompile('org.springframework.boot:spring-boot-starter-test:2.0.2.RELEASE')
     testCompile("org.junit.jupiter:junit-jupiter-api:5.0.3")
     testRuntime("org.junit.jupiter:junit-jupiter-engine:5.0.3")

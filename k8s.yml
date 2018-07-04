@@ -1,4 +1,32 @@
 apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: MOUNT_NAME
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  claimRef:
+    namespace: default
+    name: MOUNT_NAME
+  nfs:
+    path: /boston-convertdata/
+    server: 176b7485de-dub27.cn-beijing.nas.aliyuncs.com
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: MOUNT_NAME
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: v1
 kind: Service
 metadata:
   name: SERVICE_NAME_HERE
@@ -49,12 +77,17 @@ spec:
         - --image.uploadToken=8e782d5d-adda-4de2-a62f-a8e510cc490a
         - --image.vectorUrl=http://greenland-image2vector-test/image2vector/car
         - --image.vectorCachePath=/var/lib/vector
-        - --task.baseUrl=http://boston-pipeline-test
+        - --hadoop.conf.dir=/usr/local/boston-convertdata/hadoop-cdh-conf
         volumeMounts:
         - name: HIGH_DIMENSION_NAME_HERE
           mountPath: /var/lib/vector
           subPath: vector
+        - name: MOUNT_NAME
+          mountPath: /usr/local/boston-convertdata
       volumes:
       - name: HIGH_DIMENSION_NAME_HERE
         persistentVolumeClaim:
           claimName: HIGH_DIMENSION_NAME_HERE
+      - name: MOUNT_NAME
+        persistentVolumeClaim:
+          claimName: MOUNT_NAME
