@@ -29,8 +29,8 @@ public class Monitoring {
     }
 
     public void start() {
-        new Thread(this::heartbeatUpdating);
-        new Thread(this::getStructuredVideoInfo);
+        new Thread(this::heartbeatUpdating).start();
+        new Thread(this::getStructuredVideoInfo).start();
     }
 
     // 获取任务
