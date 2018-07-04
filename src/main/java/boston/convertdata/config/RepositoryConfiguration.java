@@ -1,9 +1,6 @@
 package boston.convertdata.config;
 
-import boston.convertdata.repository.EsUploader;
-import boston.convertdata.repository.ImageUploader;
-import boston.convertdata.repository.ImageVectorRepository;
-import boston.convertdata.repository.VideoInfoGetter;
+import boston.convertdata.repository.*;
 import org.apache.http.HttpHost;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestHighLevelClient;
@@ -44,5 +41,15 @@ public class RepositoryConfiguration {
     public ImageVectorRepository imageVectorRepository(@Value("${image.vectorUrl}") String vectorUrl,
                                                        @Value("${image.vectorCachePath}") String cachePath) {
         return new ImageVectorRepository(vectorUrl, cachePath);
+    }
+
+    @Bean
+    public TaskRepository taskRepository(@Value("${task.baseUrl}") String taskBaseUrl) {
+        return new TaskRepository(taskBaseUrl);
+    }
+
+    @Bean
+    public HdfsRepository hdfsRepository(@Value("${hdfs.baseUrl}") String hdfsBaseUrl, @Value("${hadoop.conf.dir:}") String hadoopConfDir) {
+        return new HdfsRepository(hdfsBaseUrl, hadoopConfDir);
     }
 }

@@ -33,6 +33,11 @@ dependencies {
     compile 'com.fatboyindustrial.gson-javatime-serialisers:gson-javatime-serialisers:1.1.1'
     compile 'org.elasticsearch.client:elasticsearch-rest-high-level-client:6.2.4'
     compile 'com.squareup.okhttp3:okhttp:3.10.0'
+    compile group: 'org.apache.hadoop', name: 'hadoop-client', version: '2.6.0'
+    compile group: 'org.apache.hadoop', name: 'hadoop-hdfs', version: '2.6.0'
+    compile group: 'org.apache.hadoop', name: 'hadoop-common', version: '2.6.0'
+    compile group: 'org.apache.hadoop', name: 'hadoop-auth', version: '2.6.0'
+    compile group: 'com.cloudera.cdh', name: 'cdh-root', version: '5.8.0'
 
     testCompile('org.springframework.boot:spring-boot-starter-test:2.0.2.RELEASE')
     testCompile("org.junit.jupiter:junit-jupiter-api:5.0.3")
