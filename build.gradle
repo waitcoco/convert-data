@@ -33,6 +33,10 @@ dependencies {
     compile 'com.fatboyindustrial.gson-javatime-serialisers:gson-javatime-serialisers:1.1.1'
     compile 'org.elasticsearch.client:elasticsearch-rest-high-level-client:6.2.4'
     compile 'com.squareup.okhttp3:okhttp:3.10.0'
+    compile group: 'org.apache.hadoop', name: 'hadoop-hdfs-client', version: '3.0.0'
+    compile(group: 'org.apache.hadoop', name: 'hadoop-common', version: '3.0.0') {
+        exclude group: 'log4j', module: 'log4j'
+    }
 
     testCompile('org.springframework.boot:spring-boot-starter-test:2.0.2.RELEASE')
     testCompile("org.junit.jupiter:junit-jupiter-api:5.0.3")
