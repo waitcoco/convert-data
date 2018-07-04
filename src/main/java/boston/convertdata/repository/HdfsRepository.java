@@ -44,30 +44,11 @@ public class HdfsRepository extends Configured {
         log.info("Read file from HDFS...");
         FSDataInputStream is = fs.open(new Path(resultPath));
         // Classical input stream usage
-        log.info("Start to write...");
+        log.info("Start to read...");
         String out = IOUtils.toString(is, StandardCharsets.UTF_8);
         return GsonInstances.ELASTICSEARCH.fromJson(out, Video.class);
     }
 
 
-    /**
-     * 扫描文件夹
-     *
-     * @param fs
-     * @param resultPath
-     * @throws IOException
-     */
-    private void listFiles(FileSystem fs, String resultPath) throws IOException {
-        System.out.println("list directories...");
-        final FileStatus[] listStatus = fs.listStatus(new Path(resultPath));
-        for (FileStatus fileStatus : listStatus) {
-            String type = fileStatus.isDirectory() ? "Directory" : "File";
-            short replication = fileStatus.getReplication();
-            String permission = fileStatus.getPermission().toString();
-            final long len = fileStatus.getLen();
-            Path path = fileStatus.getPath();
-            System.out.println(type + "\t" + permission + "\t" + replication + "\t" + len + "\t" + path);
-        }
-    }
 
 }

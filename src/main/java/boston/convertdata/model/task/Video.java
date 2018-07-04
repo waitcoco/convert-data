@@ -5,7 +5,5 @@ import lombok.Data;
 @Data
 public class Video {
     private String id;
-    private String originalLocation;
-    private String playbackUrl;
     private String resultPath;
 }

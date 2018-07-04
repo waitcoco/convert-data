@@ -78,8 +78,8 @@ spec:
         - --image.vectorUrl=http://greenland-image2vector-test/image2vector/car
         - --image.vectorCachePath=/var/lib/vector
         - --hadoop.conf.dir=/usr/local/boston-convertdata/hadoop-cdh-conf
-        - --task.baseUrl=http://47.95.160.36
-        - --hdfs.baseUrl=hdfs://cdh1:8020/
+        - --task.baseUrl=http://boston-pipeline-test
+        - --hdfs.baseUrl=hdfs://cdh1:50070/
         volumeMounts:
         - name: HIGH_DIMENSION_NAME_HERE
           mountPath: /var/lib/vector
