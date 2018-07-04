@@ -47,7 +47,6 @@ public class Monitoring {
                     // complete task, 将任务status改为2
                     taskRepository.completeTask(currentAvailableTaskResponse.getTask().getId(), currentAvailableTaskResponse.getTask().getExecutorId());
                     currentAvailableTaskResponse.setFound(false);
-                    //
                 } else {
                     log.info("no task found");
                 }
