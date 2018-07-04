@@ -25,8 +25,10 @@ public class OkHttpUtil {
     static public <T> T getResponseBodyStringWithPost(URIBuilder uriBuilder, Object body, Class<T> tClass) {
         Request request = new Request.Builder()
                 .url(uriBuilder.toString())
-                .post(RequestBody.create(JSON, GsonInstances.DEFAULT.toJson(body)))
+                .post(RequestBody.create(JSON, GsonInstances.ELASTICSEARCH.toJson(body)))
                 .build();
-        return GsonInstances.DEFAULT.fromJson(getResult(request), tClass);
+        return GsonInstances.ELASTICSEARCH.fromJson(getResult(request), tClass);
     }
+
+
 }
