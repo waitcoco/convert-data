@@ -35,7 +35,7 @@ dependencies {
     compile 'com.squareup.okhttp3:okhttp:3.10.0'
     compile group: 'org.apache.hadoop', name: 'hadoop-hdfs-client', version: '3.0.0'
     compile(group: 'org.apache.hadoop', name: 'hadoop-common', version: '3.0.0') {
-        exclude group: 'log4j', module: 'log4j'
+        exclude group: 'org.slf4j', module: 'slf4j-log4j12'
     }
 
     testCompile('org.springframework.boot:spring-boot-starter-test:2.0.2.RELEASE')
