@@ -56,6 +56,16 @@ spec:
       labels:
         app: SERVICE_NAME_HERE
     spec:
+      hostAliases:
+      - ip: "192.168.177.189"
+        hostnames:
+        - "cdh1"
+      - ip: "192.168.177.191"
+        hostnames:
+        - "cdh2"
+      - ip: "192.168.177.190"
+        hostnames:
+        - "cdh3"
       containers:
       - name: SERVICE_NAME_HERE
         image: SERVER_IMAGE_TAG_HERE
