@@ -16,7 +16,7 @@ public class Monitoring {
 
     private AvailableTaskResponse currentAvailableTaskResponse = null;
     private final int heartbeatSleepMillis = 10000;
-    private final int downloadJsonSleepMillis = 1000;
+    private final int downloadJsonSleepMillis = 10000;
 
     private final TaskRepository taskRepository;
     private final HdfsRepository hdfsRepository;
