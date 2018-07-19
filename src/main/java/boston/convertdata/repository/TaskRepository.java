@@ -26,7 +26,7 @@ public class TaskRepository extends Configured {
     public AvailableTaskResponse findAvailableTask() {
         String executorId = UUID.randomUUID().toString();
         log.info(String.format("try to get task with executorId=%s", executorId));
-        return OkHttpUtil.getResponseBodyStringWithPost(
+        return OkHttpUtil.getDefaultResponseBodyStringWithPost(
                 new URIBuilder().setPath(taskBaseUrl + "/api/task/executeAvailableTask").setParameter("executorId", executorId).setParameter("taskType", uploadTypeCode),
                 null,
                 AvailableTaskResponse.class);
@@ -40,7 +40,7 @@ public class TaskRepository extends Configured {
      */
     public void updateHeartbeat(String taskId, String executorId) {
         log.info(String.format("try to update heart beat: taskId=%s, executorId=%s", taskId, executorId));
-        OkHttpUtil.getResponseBodyStringWithPost(
+        OkHttpUtil.getDefaultResponseBodyStringWithPost(
                 new URIBuilder().setPath(taskBaseUrl + "/api/task/updateHeartbeat").setParameter("executorId", executorId).setParameter("taskId", taskId),
                 null,
                 Object.class);
@@ -49,7 +49,7 @@ public class TaskRepository extends Configured {
 
     public void completeTask (String taskId, String executorId) {
         log.info(String.format("try to complete task: taskId=%s, executorId=%s", taskId, executorId));
-        OkHttpUtil.getResponseBodyStringWithPost(
+        OkHttpUtil.getDefaultResponseBodyStringWithPost(
                 new URIBuilder().setPath(taskBaseUrl + "/api/task/completeTask").setParameter("executorId", executorId).setParameter("taskId", taskId),
                 null,
                 Object.class);
